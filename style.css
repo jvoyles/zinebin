@@ -1015,6 +1015,44 @@ main {
 }
 
 .collections-content { flex: 1; min-width: 0; }
+.empty-collection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  max-width: 320px;
+  margin: 48px auto;
+  padding: 24px;
+  color: var(--text-dim);
+}
+.empty-collection svg { opacity: 0.5; margin-bottom: 6px; }
+.empty-collection h3 {
+  font-family: "Lexend", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+.empty-collection p {
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+.empty-collection-cta {
+  display: inline-block;
+  background: #f43006;
+  color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 9px 18px;
+  border-radius: 10px;
+  transition: filter .15s ease;
+}
+.empty-collection-cta:hover { filter: brightness(1.1); }
 .collections-content-header {
   display: flex;
   align-items: center;
