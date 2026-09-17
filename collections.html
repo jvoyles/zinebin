@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" id="themeColorMeta" content="#0b0b0d">
 <title>My Collections — Zinebin</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://archive.org">
@@ -147,9 +148,10 @@
       <form id="newCollectionForm">
         <label class="auth-label" for="newCollectionInput">Name</label>
         <input type="text" id="newCollectionInput" class="auth-email-input" placeholder="e.g. Sci-Fi covers" maxlength="60" required autocomplete="off">
+        <p class="auth-note" id="newCollectionError"></p>
         <div class="prompt-actions">
           <button type="button" class="prompt-cancel-btn" id="newCollectionCancel">Cancel</button>
-          <button type="submit" class="auth-email-btn prompt-submit-btn">Create</button>
+          <button type="submit" class="auth-email-btn prompt-submit-btn" id="newCollectionSubmit">Create</button>
         </div>
       </form>
     </div>
@@ -160,6 +162,7 @@
       <button class="auth-close" id="deleteCollectionClose" aria-label="Close">&times;</button>
       <h2 class="prompt-title">Delete collection?</h2>
       <p class="auth-subtitle" id="deleteCollectionMessage">Magazines stay in your favorites.</p>
+      <p class="auth-note" id="deleteCollectionError"></p>
       <div class="prompt-actions">
         <button type="button" class="prompt-cancel-btn" id="deleteCollectionCancel">Cancel</button>
         <button type="button" class="prompt-danger-btn" id="deleteCollectionConfirm">Delete</button>

@@ -101,14 +101,17 @@ const newCollectionForm = document.getElementById('newCollectionForm');
 const newCollectionInput = document.getElementById('newCollectionInput');
 const newCollectionClose = document.getElementById('newCollectionClose');
 const newCollectionCancel = document.getElementById('newCollectionCancel');
+const newCollectionError = document.getElementById('newCollectionError');
+const newCollectionSubmit = document.getElementById('newCollectionSubmit');
 
 function openNewCollectionModal() {
   newCollectionInput.value = '';
-  newCollectionOverlay.hidden = false;
+  newCollectionError.textContent = '';
+  revealOverlay(newCollectionOverlay);
   newCollectionInput.focus();
 }
 function closeNewCollectionModal() {
-  newCollectionOverlay.hidden = true;
+  dismissOverlay(newCollectionOverlay, 200);
 }
 
 newCollectionBtn.addEventListener('click', openNewCollectionModal);
@@ -122,8 +125,14 @@ newCollectionForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = newCollectionInput.value.trim();
   if (!name) return;
+  newCollectionError.textContent = '';
+  newCollectionSubmit.disabled = true;
+  newCollectionSubmit.textContent = 'Creating…';
   const { error } = await createCollection(name);
-  if (!error) closeNewCollectionModal();
+  newCollectionSubmit.disabled = false;
+  newCollectionSubmit.textContent = 'Create';
+  if (!error) { closeNewCollectionModal(); return; }
+  newCollectionError.textContent = "Couldn't create the collection. Try again.";
 });
 
 // Delete collection modal
@@ -132,16 +141,18 @@ const deleteCollectionMessage = document.getElementById('deleteCollectionMessage
 const deleteCollectionClose = document.getElementById('deleteCollectionClose');
 const deleteCollectionCancel = document.getElementById('deleteCollectionCancel');
 const deleteCollectionConfirm = document.getElementById('deleteCollectionConfirm');
+const deleteCollectionError = document.getElementById('deleteCollectionError');
 
 function closeDeleteCollectionModal() {
-  deleteCollectionOverlay.hidden = true;
+  dismissOverlay(deleteCollectionOverlay, 200);
 }
 
 deleteCollectionBtn.addEventListener('click', () => {
   if (!activeCollectionId) return;
   const col = userCollections.find(c => c.id === activeCollectionId);
   deleteCollectionMessage.textContent = `"${col ? col.name : 'This collection'}" will be deleted. Magazines stay in your favorites.`;
-  deleteCollectionOverlay.hidden = false;
+  deleteCollectionError.textContent = '';
+  revealOverlay(deleteCollectionOverlay);
 });
 deleteCollectionClose.addEventListener('click', closeDeleteCollectionModal);
 deleteCollectionCancel.addEventListener('click', closeDeleteCollectionModal);
@@ -151,9 +162,14 @@ deleteCollectionOverlay.addEventListener('click', (e) => {
 
 deleteCollectionConfirm.addEventListener('click', async () => {
   if (!activeCollectionId) return;
+  deleteCollectionError.textContent = '';
+  deleteCollectionConfirm.disabled = true;
+  deleteCollectionConfirm.textContent = 'Deleting…';
   const { error } = await deleteCollection(activeCollectionId);
-  closeDeleteCollectionModal();
-  if (!error) activeCollectionId = null;
+  deleteCollectionConfirm.disabled = false;
+  deleteCollectionConfirm.textContent = 'Delete';
+  if (!error) { closeDeleteCollectionModal(); activeCollectionId = null; return; }
+  deleteCollectionError.textContent = "Couldn't delete the collection. Try again.";
 });
 
 attachCardInteractions(favGrid);

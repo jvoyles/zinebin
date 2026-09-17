@@ -116,7 +116,8 @@ const categoryCount = document.getElementById('categoryCount');
 
 function toggleCategoryPanel(force) {
   const open = force !== undefined ? force : categoryPanel.hidden;
-  categoryPanel.hidden = !open;
+  if (open) revealOverlay(categoryPanel);
+  else dismissOverlay(categoryPanel, 160);
   categoryDropdown.classList.toggle('open', open);
   categoryTrigger.setAttribute('aria-expanded', String(open));
 }

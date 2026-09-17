@@ -1,6 +1,18 @@
 // Shared across index.html and collections.html.
 // Requires auth.js + favorites.js to be loaded first.
 
+// Overlays/popovers use [hidden] for layout removal, and an .is-visible class
+// for the fade/scale transition — hidden is toggled with a delay on close so
+// the exit transition can play before display:none removes it.
+function revealOverlay(el) {
+  el.hidden = false;
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('is-visible')));
+}
+function dismissOverlay(el, duration = 200) {
+  el.classList.remove('is-visible');
+  setTimeout(() => { el.hidden = true; }, duration);
+}
+
 function coverUrl(identifier) {
   return `https://archive.org/services/img/${encodeURIComponent(identifier)}`;
 }
@@ -181,7 +193,7 @@ function openCollectPopover(anchorEl, archiveId, title) {
   collectPopoverTitle = title;
   collectPopoverAnchor = anchorEl;
   renderCollectPopover();
-  collectPopover.hidden = false;
+  revealOverlay(collectPopover);
   positionCollectPopover();
 }
 
@@ -199,7 +211,7 @@ function positionCollectPopover() {
 }
 
 function closeCollectPopover() {
-  collectPopover.hidden = true;
+  dismissOverlay(collectPopover, 160);
   collectPopoverArchiveId = null;
   collectPopoverAnchor = null;
 }
@@ -221,15 +233,19 @@ const themeToggle = document.getElementById('themeToggle');
 const themeIconSun = document.getElementById('themeIconSun');
 const themeIconMoon = document.getElementById('themeIconMoon');
 
+const themeColorMeta = document.getElementById('themeColorMeta');
+
 function applyTheme(theme) {
   if (theme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
     themeIconSun.hidden = true;
     themeIconMoon.hidden = false;
+    if (themeColorMeta) themeColorMeta.setAttribute('content', '#ffffff');
   } else {
     document.documentElement.removeAttribute('data-theme');
     themeIconSun.hidden = false;
     themeIconMoon.hidden = true;
+    if (themeColorMeta) themeColorMeta.setAttribute('content', '#0b0b0d');
   }
 }
 
@@ -257,14 +273,14 @@ function openReader(identifier, title) {
   readerTitle.textContent = title;
   readerExternal.href = detailsUrl(identifier);
   readerFrame.src = embedUrl(identifier);
-  readerOverlay.hidden = false;
+  revealOverlay(readerOverlay);
   document.body.style.overflow = 'hidden';
 }
 
 function closeReader() {
-  readerOverlay.hidden = true;
-  readerFrame.src = '';
+  dismissOverlay(readerOverlay, 200);
   document.body.style.overflow = '';
+  setTimeout(() => { readerFrame.src = ''; }, 200);
 }
 
 readerClose.addEventListener('click', closeReader);
@@ -293,12 +309,12 @@ const authNote = document.getElementById('authNote');
 
 function openAuthModal() {
   authNote.textContent = '';
-  authOverlay.hidden = false;
+  revealOverlay(authOverlay);
   document.body.style.overflow = 'hidden';
 }
 
 function closeAuthModal() {
-  authOverlay.hidden = true;
+  dismissOverlay(authOverlay, 200);
   document.body.style.overflow = '';
 }
 
@@ -327,19 +343,25 @@ emailAuthForm.addEventListener('submit', async (e) => {
     : `Check ${email} for a sign-in link.`;
 });
 
+function closeAccountPanel() {
+  if (accountPanel.hidden) return;
+  dismissOverlay(accountPanel, 140);
+}
+
 accountTrigger.addEventListener('click', (e) => {
   e.stopPropagation();
-  accountPanel.hidden = !accountPanel.hidden;
+  if (accountPanel.hidden) revealOverlay(accountPanel);
+  else closeAccountPanel();
 });
 
 document.addEventListener('click', (e) => {
   if (!accountPanel.hidden && !accountMenu.contains(e.target)) {
-    accountPanel.hidden = true;
+    closeAccountPanel();
   }
 });
 
 signOutBtn.addEventListener('click', () => {
-  accountPanel.hidden = true;
+  closeAccountPanel();
   signOut();
 });
 
@@ -354,6 +376,7 @@ onAuthChange((user) => {
   } else {
     signInBtn.hidden = false;
     accountMenu.hidden = true;
+    accountPanel.classList.remove('is-visible');
     accountPanel.hidden = true;
   }
 });
