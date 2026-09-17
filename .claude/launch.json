@@ -4,7 +4,7 @@
     {
       "name": "zinebin",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8934"],
+      "runtimeArgs": ["-m", "http.server", "8934", "--directory", "/Users/jacobvoyles/code/zinebin"],
       "port": 8934
     }
   ]

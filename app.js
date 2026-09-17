@@ -175,6 +175,14 @@ loadMoreBtn.addEventListener('click', () => {
 
 attachCardInteractions(grid);
 
+// Pre-fill search when arriving via a shared/search-engine link (?q=...)
+const qParam = new URLSearchParams(window.location.search).get('q');
+if (qParam) {
+  searchInput.value = qParam;
+  searchClear.hidden = !qParam;
+  state.term = qParam;
+}
+
 // Pre-select an industry filter when arriving via a footer category link
 const industryParam = new URLSearchParams(window.location.search).get('industry');
 if (industryParam) {
