@@ -26,9 +26,12 @@ function embedUrl(identifier) {
 }
 
 function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
+  return (str == null ? '' : String(str))
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function cardHtml(doc) {
@@ -45,7 +48,7 @@ function cardHtml(doc) {
   return `
     <div class="card" role="button" tabindex="0" data-id="${escapeHtml(doc.identifier)}" data-title="${escapeHtml(title)}">
       <div class="card-cover">
-        <img loading="lazy" src="${coverUrl(doc.identifier)}" alt="${escapeHtml(title)} cover" onerror="this.closest('.card').remove()">
+        <img loading="lazy" src="${coverUrl(doc.identifier)}" alt="${escapeHtml(title)} cover">
         <button type="button" class="card-fav-btn${isFav ? ' active' : ''}" data-fav-id="${escapeHtml(doc.identifier)}" data-fav-title="${escapeHtml(title)}" aria-label="Favorite">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 21s-6.7-4.35-9.3-8.1C.9 10.2 1.6 6.6 4.6 5.1c2.3-1.1 4.7-.3 6 1.5l1.4 1.9 1.4-1.9c1.3-1.8 3.7-2.6 6-1.5 3 1.5 3.7 5.1 1.9 7.8C18.7 16.65 12 21 12 21Z"/></svg>
         </button>
@@ -67,6 +70,12 @@ function skeletonHtml() {
 
 // Wires up card click (open reader) + favorite button click for any grid container
 function attachCardInteractions(container) {
+  container.addEventListener('error', (e) => {
+    if (e.target.tagName === 'IMG') {
+      const card = e.target.closest('.card');
+      if (card) card.remove();
+    }
+  }, true);
   container.addEventListener('click', (e) => {
     const favBtn = e.target.closest('.card-fav-btn');
     if (favBtn) {

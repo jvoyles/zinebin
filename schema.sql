@@ -41,4 +41,5 @@ create policy "own collection items" on public.collection_items
     exists (select 1 from public.collections c where c.id = collection_id and c.user_id = auth.uid())
   ) with check (
     exists (select 1 from public.collections c where c.id = collection_id and c.user_id = auth.uid())
+    and exists (select 1 from public.favorites f where f.id = favorite_id and f.user_id = auth.uid())
   );
